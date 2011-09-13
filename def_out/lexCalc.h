@@ -13,6 +13,7 @@ typedef union calc_type {
  //       int length;
 } calc_type;
 
+
 #define YYSTYPE calc_type
 
 #define EXIT_SUCCESS 0

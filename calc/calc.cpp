@@ -101,11 +101,12 @@ int nCf=0;
 		else
 		{
 			FILE *f=0;
-			_wfopen_s( &f, fnam, L"rt,ccs=UTF-8" );
+			_wfopen_s( &f, fnam, L"rt" );
 			if( !f )return;
 			fseek( f, 0, SEEK_END );
 			int siz=ftell(f);
 			lCf[nCf].wcsing=new char[siz+16];
+			memset(lCf[nCf].wcsing,0x00, siz+16);
 			fseek(f,0,SEEK_SET);
 			fread( lCf[nCf].wcsing, siz, 1, f );
 			fclose(f);
@@ -798,9 +799,10 @@ int main( int argc, char *argv[ ] )
 {
 	initFuncPtr();
 
-	wprintf( L"ASS Scripter   -   (c) 2004 Hajo Krabbenhoeft aka Tentacle\n" );
-	wprintf( L"2011 modified by Hajo Krabbenhoeft for OutlawJonas\n" );
+	wprintf( L"ASS Scripter   -   (c) 2004 Hajo Nils Krabbenhöft aka Tentacle\n" );
 	wprintf( L"%s\n", asciiArt );
+	wprintf( L"2011 modified by Hajo Nils Krabbenhöft for OutlawJonas\n" );
+	wprintf( L"%s\n", asciiArt2 );
 	wprintf( L"\nFree to use, no guarantees and do not modify or bug me about it\nUsage:\n Get a .ass script with only {\\K}'s or Comments in it (no effects) \n and drag it on proggy\n");
 
 	
@@ -1179,6 +1181,14 @@ extern "C" void DoIt3( char *txt )
 	//wcscpy_s( wcs, 2048, txt );
 	if( !bFirstCall )DoIt3Real();
 	else bFirstCall=0;
+}
+
+extern "C" void setCalcTypeString(calc_type* target, char* str, int unquote) {
+	MultiByteToWideChar(CP_UTF8,0,str,-1,target->name,2048);
+	if(unquote) {
+		wcscpy_s(target->name,2048,target->name+1);
+		target->name[wcslen(target->name)-1]=0;
+	}
 }
 
 

@@ -6,6 +6,8 @@
 
 #include "LexCalc_tab.h"
 
+void setCalcTypeString(calc_type* target, char* str, int unquote);
+
 
 
 %}
@@ -63,8 +65,8 @@ string  (\")[^\"]+(\")
 
 "BORDERLINE"           { return BORDERLINE; }
 
-{identifier} { strcpy( yylval.name, yytext ); return IDENTIFIER; }
-{string} { strcpy( yylval.name, yytext+1 ); yylval.name[strlen(yylval.name)-1]=0; return STRING; }
+{identifier} { setCalcTypeString( &yylval, yytext, 0 ); return IDENTIFIER; }
+{string} { setCalcTypeString( &yylval, yytext, 1); return STRING; }
 \n|.             { return yytext[0]; }
 
 %%

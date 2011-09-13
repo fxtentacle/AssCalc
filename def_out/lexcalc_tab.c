@@ -69,10 +69,10 @@ double get_identifier_arr( calc_type name, double ind );
 void set_identifier_arr( calc_type name, double v, double ind );
 double find_index_arr( calc_type name, double vx );
 
-int textlock_identifier( char* name );
-int textfind_identifier( char* name );
-int stylelock_identifier( char* name );
-void print_identifier( char* name );
+int textlock_identifier( wchar_t* name );
+int textfind_identifier( wchar_t* name );
+int stylelock_identifier( wchar_t* name );
+void print_identifier( wchar_t* name );
 void print_time_of( double t );
 void print_pos_of( double t );
 void print_hex_of( double t );
@@ -80,14 +80,14 @@ void print_char_of( double t );
 void print_color_of( double t );
 void print_tval_of( double t );
 
-void loop_file( char* name, double t, double t2 );
+void loop_file( wchar_t* name, double t, double t2 );
 
-void rand_ins( char* name, double t );
+void rand_ins( wchar_t* name, double t );
 double get_rand();
 
-void fontmatchuse( char* name );
-void set_encoding( char* name );
-void set_flag( char* name );
+void fontmatchuse( wchar_t* name );
+void set_encoding( wchar_t* name );
+void set_flag( wchar_t* name );
 
 double get_pixbuf( double vx, double vy );
 
@@ -1035,7 +1035,7 @@ case 28:
     break;}
 case 29:
 #line 118 "lexcalc.y"
-{ fprintf( foutt, "%s", yyvsp[-1].name) ;
+{ fwprintf( foutt, L"%s", yyvsp[-1].name) ;
     break;}
 case 30:
 #line 119 "lexcalc.y"

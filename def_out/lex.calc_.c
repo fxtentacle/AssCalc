@@ -533,9 +533,11 @@ char *yytext;
 
 #include "LexCalc_tab.h"
 
+void setCalcTypeString(calc_type* target, char* str, int unquote);
 
 
-#line 539 "lex.calc_.c"
+
+#line 541 "lex.calc_.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -682,10 +684,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 20 "lexCalc.l"
+#line 22 "lexCalc.l"
 
 
-#line 689 "lex.calc_.c"
+#line 691 "lex.calc_.c"
 
 	if ( yy_init )
 		{
@@ -770,215 +772,215 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 22 "lexCalc.l"
+#line 24 "lexCalc.l"
 { /* Skip blanks. */ }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 23 "lexCalc.l"
+#line 25 "lexCalc.l"
 { sscanf(yytext, "%lf", &yylval.value); return NUMBER; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 24 "lexCalc.l"
+#line 26 "lexCalc.l"
 { return EXIT; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 25 "lexCalc.l"
+#line 27 "lexCalc.l"
 { return POSOF; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 26 "lexCalc.l"
+#line 28 "lexCalc.l"
 { return HEXOF; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 27 "lexCalc.l"
+#line 29 "lexCalc.l"
 { return CHAROF; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 28 "lexCalc.l"
+#line 30 "lexCalc.l"
 { return COLOROF; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 29 "lexCalc.l"
+#line 31 "lexCalc.l"
 { return TIMEOF; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 30 "lexCalc.l"
+#line 32 "lexCalc.l"
 { return TVALOF; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 31 "lexCalc.l"
+#line 33 "lexCalc.l"
 { return FONTMATCHUSE; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 32 "lexCalc.l"
+#line 34 "lexCalc.l"
 { return MIN; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 33 "lexCalc.l"
+#line 35 "lexCalc.l"
 { return MAX; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 34 "lexCalc.l"
+#line 36 "lexCalc.l"
 { return INTROUND; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 35 "lexCalc.l"
+#line 37 "lexCalc.l"
 { return SIN; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 36 "lexCalc.l"
+#line 38 "lexCalc.l"
 { return COS; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 37 "lexCalc.l"
+#line 39 "lexCalc.l"
 { return SIGN; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 38 "lexCalc.l"
+#line 40 "lexCalc.l"
 { return TRUNC; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 39 "lexCalc.l"
+#line 41 "lexCalc.l"
 { return LOWKILL; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 40 "lexCalc.l"
+#line 42 "lexCalc.l"
 { return SWITCH; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 41 "lexCalc.l"
+#line 43 "lexCalc.l"
 { return KILLTHISLOOP; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 42 "lexCalc.l"
+#line 44 "lexCalc.l"
 { return PIXBUF; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 43 "lexCalc.l"
+#line 45 "lexCalc.l"
 { return TEXTFIND; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 44 "lexCalc.l"
+#line 46 "lexCalc.l"
 { return TEXTFINDBOOL; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 45 "lexCalc.l"
+#line 47 "lexCalc.l"
 { return TEXTLOCK; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 46 "lexCalc.l"
+#line 48 "lexCalc.l"
 { return STYLELOCK; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 47 "lexCalc.l"
+#line 49 "lexCalc.l"
 { return INSERT; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 48 "lexCalc.l"
+#line 50 "lexCalc.l"
 { return RANDOMINS; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 49 "lexCalc.l"
+#line 51 "lexCalc.l"
 { return LOOPFILE; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 50 "lexCalc.l"
+#line 52 "lexCalc.l"
 { return LOOPFILE2; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 51 "lexCalc.l"
+#line 53 "lexCalc.l"
 { return SETFLAG; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 53 "lexCalc.l"
+#line 55 "lexCalc.l"
 { return TEXTINDEX; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 54 "lexCalc.l"
+#line 56 "lexCalc.l"
 { return STORE; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 55 "lexCalc.l"
+#line 57 "lexCalc.l"
 { return GET; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 57 "lexCalc.l"
+#line 59 "lexCalc.l"
 { return COLORING_OFF ; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 59 "lexCalc.l"
+#line 61 "lexCalc.l"
 { return PRINTS; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 60 "lexCalc.l"
+#line 62 "lexCalc.l"
 { return PRINTV; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 62 "lexCalc.l"
+#line 64 "lexCalc.l"
 { return FINDINDEX; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 64 "lexCalc.l"
+#line 66 "lexCalc.l"
 { return BORDERLINE; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 66 "lexCalc.l"
-{ strcpy( yylval.name, yytext ); return IDENTIFIER; }
+#line 68 "lexCalc.l"
+{ setCalcTypeString( &yylval, yytext, 0 ); return IDENTIFIER; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 67 "lexCalc.l"
-{ strcpy( yylval.name, yytext+1 ); yylval.name[strlen(yylval.name)-1]=0; return STRING; }
+#line 69 "lexCalc.l"
+{ setCalcTypeString( &yylval, yytext, 1); return STRING; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 68 "lexCalc.l"
+#line 70 "lexCalc.l"
 { return yytext[0]; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 70 "lexCalc.l"
+#line 72 "lexCalc.l"
 ECHO;
 	YY_BREAK
-#line 982 "lex.calc_.c"
+#line 984 "lex.calc_.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1838,6 +1840,6 @@ int main()
 	return 0;
 	}
 #endif
-#line 70 "lexCalc.l"
+#line 72 "lexCalc.l"
 
 
