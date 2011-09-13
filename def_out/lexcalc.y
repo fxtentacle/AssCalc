@@ -29,6 +29,7 @@ void rand_ins( char* name, double t );
 double get_rand();
 
 void fontmatchuse( char* name );
+void set_encoding( char* name );
 void set_flag( char* name );
 
 double get_pixbuf( double vx, double vy );
@@ -52,7 +53,7 @@ extern FILE *foutt;
 %token EXIT
 %token TIMEOF TVALOF POSOF HEXOF COLOROF CHAROF
 %token INSERT TEXTLOCK TEXTFIND STYLELOCK
-%token FONTMATCHUSE SETFLAG
+%token FONTMATCHUSE SETFLAG ENCODING
 %token RANDOM RANDOMINS
 %token LOOPFILE LOOPFILE2
 

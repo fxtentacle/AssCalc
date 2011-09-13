@@ -9,7 +9,7 @@
 
 typedef union calc_type {
         double value;
-        char name[2048];
+        wchar_t name[2048];
  //       int length;
 } calc_type;
 
