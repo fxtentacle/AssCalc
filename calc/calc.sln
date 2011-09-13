@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "calc", "calc.vcproj", "{819EE4EE-8926-49D1-A09F-956F36E4EEEC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		DebugRel|Win32 = DebugRel|Win32
+		Release|Win32 = Release|Win32
+		ReleaseSimpleFx|Win32 = ReleaseSimpleFx|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{819EE4EE-8926-49D1-A09F-956F36E4EEEC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{819EE4EE-8926-49D1-A09F-956F36E4EEEC}.Debug|Win32.Build.0 = Debug|Win32
+		{819EE4EE-8926-49D1-A09F-956F36E4EEEC}.DebugRel|Win32.ActiveCfg = DebugRel|Win32
+		{819EE4EE-8926-49D1-A09F-956F36E4EEEC}.DebugRel|Win32.Build.0 = DebugRel|Win32
+		{819EE4EE-8926-49D1-A09F-956F36E4EEEC}.Release|Win32.ActiveCfg = Release|Win32
+		{819EE4EE-8926-49D1-A09F-956F36E4EEEC}.Release|Win32.Build.0 = Release|Win32
+		{819EE4EE-8926-49D1-A09F-956F36E4EEEC}.ReleaseSimpleFx|Win32.ActiveCfg = ReleaseSimpleFx|Win32
+		{819EE4EE-8926-49D1-A09F-956F36E4EEEC}.ReleaseSimpleFx|Win32.Build.0 = ReleaseSimpleFx|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
