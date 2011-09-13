@@ -1,4 +1,4 @@
-char *asciiArt="                                                                       \n\
+wchar_t *asciiArt=L"                                                                       \n\
                             ;;                                         \n\
           ;;\"\"ttkkwwZZRRMMMMMMww                                       \n\
       JJRRMMMMMMMMRRZZwwkkJJ\"\"                                         \n\

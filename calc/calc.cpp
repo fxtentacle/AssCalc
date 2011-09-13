@@ -13,14 +13,14 @@ extern YYSTYPE src_lval;
 
 extern "C" int calc_parse( );
 extern "C" void calc_restart( FILE *input_file );
-extern "C" void *calc__scan_wcsing( const wchar_t *wcs );
+extern "C" void *calc__scan_string( const char *str );
 
-void *loc_calc__scan_wcsing( const wchar_t *wcs )
+void *loc_calc__scan_string( const wchar_t *wcs )
 {
 //	wchar_t tmp[8192];
 //	wcscpy( tmp, wcs );
 	FILE *f = 0;
-	_wfopen_s(&f, wcs, L"rt" );
+	_wfopen_s(&f, wcs, L"rt,ccs=UTF-8" );
 	calc_restart( f ); 
 	calc_parse();
 	fclose(f);
@@ -60,7 +60,7 @@ void localfx_CallPass_fnc( wchar_t *fnam, scan_file_fncp sffp, scan_wcs_fncp ssf
 
 typedef struct{
 	wchar_t FName[256];
-	wchar_t *wcsing;
+	char *wcsing;
 }haCacheFile;
 
 haCacheFile lCf[256];
@@ -80,7 +80,7 @@ int nCf=0;
 		return 0;
 	}
 
-	wchar_t *GetCf( wchar_t *name )
+	char *GetCf( wchar_t *name )
 	{
 		for( int i=0;i<nCf;i++ )
 		{
@@ -92,20 +92,20 @@ int nCf=0;
 
 	void CallPass_fnc( wchar_t *fnam, scan_file_fncp sffp, scan_wcs_fncp ssfp, calc_parse_fncp cpfp )
 	{
-		wchar_t *cf=GetCf( fnam );
+		char *cf=GetCf( fnam );
 		if( cf )
 		{
-			calc__scan_wcsing( cf );
+			calc__scan_string( cf );
 			cpfp();
 		}
 		else
 		{
 			FILE *f=0;
-			_wfopen_s( &f, fnam, L"rt" );
+			_wfopen_s( &f, fnam, L"rt,ccs=UTF-8" );
 			if( !f )return;
 			fseek( f, 0, SEEK_END );
 			int siz=ftell(f);
-			lCf[nCf].wcsing=new wchar_t[siz+16];
+			lCf[nCf].wcsing=new char[siz+16];
 			fseek(f,0,SEEK_SET);
 			fread( lCf[nCf].wcsing, siz, 1, f );
 			fclose(f);
@@ -113,7 +113,7 @@ int nCf=0;
 			wcscpy_s( lCf[nCf].FName, 256, fnam );
 
 //			sffp( f );
-			calc__scan_wcsing( lCf[nCf].wcsing );
+			calc__scan_string( lCf[nCf].wcsing );
 			cpfp();
 
 			nCf++;
@@ -130,7 +130,7 @@ int nCf=0;
 	#ifdef HA_SIMPLEFX
 		void initFuncPtr()
 		{
-			printf( L"\n\nFX Brought to you by:\nTentacle\nFX Designed by:\nTomo-Chan\n\n\n\n" );
+			wprintf( L"\n\nFX Brought to you by:\nTentacle\nFX Designed by:\nTomo-Chan\n\n\n\n" );
 			bHasPass=localfx_bHasPass_fnc;
 			CallPass=localfx_CallPass_fnc;
 		}
@@ -171,7 +171,7 @@ int do_once()
 	else
 		swprintf_s( scrname, 512, L"p%d.txt", g_curPass );
 
-	CallPass( scrname, calc_restart, loc_calc__scan_wcsing, loc_calc_parse );
+	CallPass( scrname, calc_restart, loc_calc__scan_string, loc_calc_parse );
 
 	int i;
 	for( i=0;i<nLoopFiles;i++ )
@@ -191,7 +191,7 @@ int do_once()
 				
 				swprintf_s( scrname, 512, L"%s", lLoopFiles[i] );
 
-				CallPass( scrname, calc_restart, loc_calc__scan_wcsing, loc_calc_parse );
+				CallPass( scrname, calc_restart, loc_calc__scan_string, loc_calc_parse );
 			}
 		}
 	}
@@ -207,16 +207,16 @@ wchar_t *g_tmpHeader;
 wchar_t g_tmpComplete[2048];
 wchar_t g_tmpNoComment[2048];
 
-extern "C" wchar_t *calc_text;
-extern "C" int calc_error(wchar_t* errwcs) {
-        printf(L"\n\n-= outError: %s\n-= in file: %s\n-= at:%s", errwcs,scrname, calc_text);
+extern "C" char *calc_text;
+extern "C" int calc_error(char* errwcs) {
+        wprintf(L"\n\n-= outError: %S\n-= in file: %s\n-= at:%S", errwcs,scrname, calc_text);
  		_getch();
        return 1;
 }
 
-extern "C" wchar_t *src_text;
-extern "C" int src_error(wchar_t* errwcs) {
-        printf(L"\n\n-= inError: %s\n-= at:%s\n-= line:%s", errwcs,src_text,g_tmp);
+extern "C" char *src_text;
+extern "C" int src_error(char* errwcs) {
+        wprintf(L"\n\n-= inError: %S\n-= at:%s\n-= line:%S", errwcs,src_text,g_tmp);
 		_getch();
         return 1;
 }
@@ -439,8 +439,11 @@ void GenCKey( wchar_t *txt, double t1, double t2, int which=1 )
 	nHSV_CT[i]++;
 }
 
-extern "C" void CheckComment( wchar_t *txt )
+extern "C" void CheckComment( char *intxt )
 {
+	wchar_t txt[4096];
+	MultiByteToWideChar(CP_UTF8,0,intxt,-1,txt,4096);
+
 	if( txt[1]=='%' )
 	{
 		if( txt[2]=='%' )
@@ -449,7 +452,10 @@ extern "C" void CheckComment( wchar_t *txt )
 			wcscpy_s( tre, 2048, txt+3 );
 			if( tre[wcslen(tre)-1]=='}' )tre[wcslen(tre)-1]=0;
 			wcscat_s( tre, 2048, L"\n" );
-			calc__scan_wcsing( tre );
+
+			char tretmp[4096];
+			WideCharToMultiByte(CP_UTF8,0,tre,-1,tretmp,4096,0,0);
+			calc__scan_string( tretmp );
 			calc_parse( );
 		}
 		else
@@ -762,14 +768,13 @@ extern "C" void set_identifier( calc_type name, double v )
 
 
 extern "C" int src_parse( );
-extern "C" void src__scan_wcsing( wchar_t *input );
+extern "C" void src__scan_string( char *input );
 
 extern "C" void DoIt1( double t1, double t2 );
 extern "C" void DoIt2( double t1 );
-extern "C" void DoIt3( wchar_t *txt );
+extern "C" void DoIt3( char *txt );
 
 wchar_t fontmatchus[512];
-wchar_t textEncoding[512];
 bool bHasBeenDone;
 void haGetSiz();
 
@@ -789,14 +794,14 @@ void DoIt3Real();
 extern wchar_t *asciiArt;
 extern wchar_t *asciiArt2;
 
-int main( int argc, wchar_t *argv[ ] )
+int main( int argc, char *argv[ ] )
 {
 	initFuncPtr();
 
-	printf( L"ASS Scripter   -   (c) 2004 Hajo Krabbenhoeft aka Tentacle\n" );
-	printf( L"2011 modified by Hajo Krabbenhoeft for OutlawJonas\n" );
-	printf( L"%s\n", asciiArt );
-	printf( L"\nFree to use, no guarantees and do not modify or bug me about it\nUsage:\n Get a .ass script with only {\\K}'s or Comments in it (no effects) \n and drag it on proggy\n");
+	wprintf( L"ASS Scripter   -   (c) 2004 Hajo Krabbenhoeft aka Tentacle\n" );
+	wprintf( L"2011 modified by Hajo Krabbenhoeft for OutlawJonas\n" );
+	wprintf( L"%s\n", asciiArt );
+	wprintf( L"\nFree to use, no guarantees and do not modify or bug me about it\nUsage:\n Get a .ass script with only {\\K}'s or Comments in it (no effects) \n and drag it on proggy\n");
 
 	
 	FILE *f=0;
@@ -813,35 +818,31 @@ int main( int argc, wchar_t *argv[ ] )
 	if( argv&&argv[0]&&argv[1] )
 	{
 		f = 0;
-		if( argc >= 4 )
-			_wfopen_s( &f, argv[4], L"rt" );
-		else if( argc >= 2 )
-			_wfopen_s( &f, argv[2], L"rt" );
+		if( argc >= 3 )
+			fopen_s( &f, argv[2], "rt,ccs=UTF-8" );
 		if( !f )
-			_wfopen_s( &f, argv[1], L"rt" );
+			fopen_s( &f, argv[1], "rt,ccs=UTF-8" );
+		if( !f )
+			fopen_s( &f, argv[1], "rt" );
 	}
 	if( !f )
 		_wfopen_s( &f, L"src.txt", L"rt" );
 
 	bool bSplit=0;
 
-	if( argc >= 2 && !wcscmp( argv[1], L"split" ) )
+	if( argc >= 3 && !strcmp( argv[1], "split" ) )
 		bSplit=1;
-
-	if( argc >= 4 && !wcscmp( argv[2], L"encoding" ) ) {
-		wcscpy_s(textEncoding, 512, argv[3]);
-	} else wcscpy_s(textEncoding, 512, L"UTF8");
 
 	FILE *addfile=0;
 
 	if( bSplit )
 	{
 		foutt=0;
-		_wfopen_s( &foutt,  L"out_000.ass", L"wt" );
+		_wfopen_s( &foutt,  L"out_000.ass", L"wt,ccs=UTF-8" );
 		nFilesSplit=1;
 
 		addfile=0;
-		_wfopen_s( &addfile, L"addfile.vcf", L"wt" );
+		_wfopen_s( &addfile, L"addfile.vcf", L"wt,ccs=UTF-8" );
 		fwprintf( addfile, L"VirtualDub.video.filters.Clear();\n" );
 		fwprintf( addfile, L"VirtualDub.video.filters.Add(\"TextSub 2.23\");\n" );
 		fwprintf( addfile, L"VirtualDub.video.filters.instance[%d].Config(\"out_%3.3d.ass\", 1, \"25.00000\");\n",0,0 );
@@ -849,12 +850,12 @@ int main( int argc, wchar_t *argv[ ] )
 	else
 	{
 		foutt=0;
-		_wfopen_s( &foutt, L"out.ass", L"wt" );
+		_wfopen_s( &foutt, L"out.ass", L"wt,ccs=UTF-8" );
 	}
 	
 	if( !f )
 	{
-		printf( L"No input file." );
+		wprintf( L"No input file." );
 		_getch();
 		return -1;
 	}
@@ -867,20 +868,18 @@ int main( int argc, wchar_t *argv[ ] )
 			wchar_t tmp[4096];
 			swprintf_s( tmp, 4096, L"out_%3.3d.ass", nFilesSplit );
 			foutt=0;
-			_wfopen_s( &foutt, tmp, L"wt" );
+			_wfopen_s( &foutt, tmp, L"wt,ccs=UTF-8" );
 
 			fwprintf( addfile, L"VirtualDub.video.filters.Add(\"TextSub 2.23\");\n" );
 			fwprintf( addfile, L"VirtualDub.video.filters.instance[%d].Config(\"out_%3.3d.ass\", 1, \"25.00000\");\n",nFilesSplit,nFilesSplit );
 
-			fputs( headerMEMFile, foutt );
+			fputws( headerMEMFile, foutt );
 
 			nFilesSplit++;
 		}
 
-		wchar_t readtmp[4096];
 		wchar_t tmp[4096];
-		if( !fgets( readtmp, 4096, f ) )break;
-		MultiByteToWideChar(CP_UTF8, 0, readtmp, 4096, tmp, 4096);
+		if( !fgetws( tmp, 4096, f ) )break;
 
 		if( !wcsncmp( tmp, L"Style: ", 7 ) )
 		{
@@ -933,8 +932,8 @@ int main( int argc, wchar_t *argv[ ] )
 				wcscat_s(g_tmpNoComment, 2048,g_tmp+cpos);
 
 			DoIt1( v1,v2 );
-		//	printf( L"%s\n", c );
-			printf( L"." );
+		//	wprintf( L"%s\n", c );
+			wprintf( L"." );
 			nthThisLineAll=0;
 			nChrThisLineAll=0;
 			nSizeThisLineAll=0;
@@ -973,7 +972,9 @@ int main( int argc, wchar_t *argv[ ] )
 					g_curPassHeader=0;
 					DoIt1( v1,v2 );
 					//sprintf( scrname, L"p%d.txt", i );
-					src__scan_wcsing( c );
+					char tmpc[4096];
+					WideCharToMultiByte(CP_UTF8,0,c,-1,tmpc,4096,0,0);
+					src__scan_string( tmpc );
 					if( src_parse() )return -2;
 
 					bLastOne=1;
@@ -989,7 +990,7 @@ int main( int argc, wchar_t *argv[ ] )
 		{
 			if( wcsncmp( tmp, L"Comment:", 8 ) )
 			{
-				fputs( tmp, foutt );
+				fputws( tmp, foutt );
 				wcscat_s( headerMEMFile, 16384, tmp );
 				wcscat_s( headerMEMFile, 16384, L"\n" );
 			}
@@ -998,14 +999,14 @@ int main( int argc, wchar_t *argv[ ] )
 	fclose(f);
 
 	f=0;
-	_wfopen_s( &f, L"incbin.txt", L"rt" );
+	_wfopen_s( &f, L"incbin.txt", L"rt,ccs=UTF-8" );
 	if(f)
 	{
 		while(!feof(f) )
 		{
 			wchar_t tmp[4096];
-			if( !fgets( tmp, 4096, f ) )break;
-			fputs( tmp, foutt );
+			if( !fgetws( tmp, 4096, f ) )break;
+			fputws( tmp, foutt );
 		}
 	}
 
@@ -1014,7 +1015,7 @@ int main( int argc, wchar_t *argv[ ] )
 	if( addfile )
 		fclose(addfile);
 
-	printf( L"\n\nDone.\n");
+	wprintf( L"\n\nDone.\n");
 	_getch();
 	return 1;
 }
@@ -1047,7 +1048,7 @@ extern "C" void DoIt2( double t1 )
 {
 
 	if( !bHasBeenDone )
-		DoIt3(L"");
+		DoIt3("");
 
 	bHasBeenDone=0;
 
@@ -1169,12 +1170,13 @@ void DoIt3Real()
 }
 
 
-extern "C" void DoIt3( wchar_t *txt )
+extern "C" void DoIt3( char *txt )
 {
 	bHasBeenDone=1;
 
 	wcscpy_s( lwcs, 2048, wcs );
-	wcscpy_s( wcs, 2048, txt );
+	MultiByteToWideChar(CP_UTF8,0,txt,-1,wcs,2048);
+	//wcscpy_s( wcs, 2048, txt );
 	if( !bFirstCall )DoIt3Real();
 	else bFirstCall=0;
 }
@@ -1300,11 +1302,6 @@ extern "C" void set_flag( wchar_t* name )
 		flag_no_K_insert=1;
 }
 
-extern "C" void use_encoding( wchar_t* name )
-{
-	wcscpy_s( textEncoding, 512, name );
-}
-
 extern "C" void fontmatchuse( wchar_t* name )
 {
 	wcscpy_s( fontmatchus, 512, name );
@@ -1403,7 +1400,7 @@ int __stdcall CALLBACK EnumFontFamProc(
 
 
 long haGSDraw_sx,haGSDraw_sy;
-wchar_t clrwcs[]="                                                                                                                                                                  " ;
+wchar_t clrwcs[]=L"                                                                                                                                                                  " ;
 long haGSDraw( wchar_t *sizewcsSoFarins, HDC myDCUse=0, bool needBorder=0 )
 {
 //we need to set locale:
@@ -1425,7 +1422,7 @@ long haGSDraw( wchar_t *sizewcsSoFarins, HDC myDCUse=0, bool needBorder=0 )
 	if( st==nStyle )
 	{
 		//no matching style
-		printf( L"\nno style found: %s\n", style );
+		wprintf( L"\nno style found: %s\n", style );
 
 		haGSDraw_sx=0;
 		haGSDraw_sy=0;
@@ -1457,7 +1454,7 @@ long haGSDraw( wchar_t *sizewcsSoFarins, HDC myDCUse=0, bool needBorder=0 )
 //	hei = -MulDiv((int)(h+0.5), GetDeviceCaps(hdc, LOGPIXELSY), 72);
 
 
-	LOGFONTA lf;
+	LOGFONT lf;
 
 	memset(&lf, 0, sizeof(lf));
 
@@ -1475,11 +1472,11 @@ long haGSDraw( wchar_t *sizewcsSoFarins, HDC myDCUse=0, bool needBorder=0 )
 	lf.lfWeight = wi;
 	lf.lfItalic = (BYTE)i;
 	lf.lfUnderline = 0;
-	lf.lfwcsikeOut = 0;
+	lf.lfStrikeOut = 0;
 
 
 //	EnumFonts( hdc, c, EnumFontFamProc, 0 );
-	HFONT f=CreateFontIndirectA( &lf );
+	HFONT f=CreateFontIndirect( &lf );
 	RECT r;
 	r.left=0;
 	r.top=0;
@@ -1487,10 +1484,10 @@ long haGSDraw( wchar_t *sizewcsSoFarins, HDC myDCUse=0, bool needBorder=0 )
 	r.bottom=0;
 //	wcscat( sizewcsSoFarins, L" " );
 	SelectObject( hdc, f );
-		DrawTextA( hdc, clrwcs, wcslen(clrwcs), &r, DT_CALCRECT );
-		DrawTextA( hdc, clrwcs, wcslen(clrwcs), &r, 0 );
+		DrawText( hdc, clrwcs, wcslen(clrwcs), &r, DT_CALCRECT );
+		DrawText( hdc, clrwcs, wcslen(clrwcs), &r, 0 );
 		SIZE s;
-		GetTextExtentPoint32A( hdc, sizewcsSoFarins, wcslen(sizewcsSoFarins), &s);
+		GetTextExtentPoint32( hdc, sizewcsSoFarins, wcslen(sizewcsSoFarins), &s);
 //		DrawText( hdc, sizewcsSoFarins, wcslen(sizewcsSoFarins), &r, DT_CALCRECT );
 		haGSDraw_sx=(long)((s.cx)*float( (xsc-100)*1+100 )/100.f+0.5f);
 		haGSDraw_sy=(long)((s.cy)*float( (ysc-100)*1+100 )/100.f+0.5f);
@@ -1504,7 +1501,7 @@ long haGSDraw( wchar_t *sizewcsSoFarins, HDC myDCUse=0, bool needBorder=0 )
 			BeginPath(hdc); 
 		}
 
-		DrawTextA( hdc, sizewcsSoFarins, wcslen(sizewcsSoFarins), &r, 0 );
+		DrawText( hdc, sizewcsSoFarins, wcslen(sizewcsSoFarins), &r, 0 );
 
 		if( needBorder )
 		{
@@ -1555,7 +1552,7 @@ void haGetSiz()
 
 	FILE *f;
 	f=0;
-	_wfopen_s( &f, L"sizetable.txt", L"at" );
+	_wfopen_s( &f, L"sizetable.txt", L"at,ccs=UTF-8" );
 	fwprintf( f, L"|%s| : %d\n", sizewcsSoFar, nSizeThisLine );
 	fclose(f);
 
@@ -1580,7 +1577,7 @@ long haGetSizThisOne()
 	nSizeThisOne=haGSDraw( tmp );//-nSizeThisLine;
 	FILE *f;
 	f=0;
-	_wfopen_s( &f, L"sizetable.txt", L"at" );
+	_wfopen_s( &f, L"sizetable.txt", L"at,ccs=UTF-8" );
 	fwprintf( f, L"|%s| -> |%s| : %d\n", g_thiswcs, tmp, nSizeThisOne );
 	fclose(f);
 	return nSizeThisOne;
@@ -1603,7 +1600,7 @@ long haGetYSizThisOne()
 	haGSDraw( tmp );//-nSizeThisLine;
 	FILE *f;
 	f=0;
-	_wfopen_s( &f, L"sizetabley.txt", L"at" );
+	_wfopen_s( &f, L"sizetabley.txt", L"at,ccs=UTF-8" );
 	fwprintf( f, L"|%s| -> |%s| : %d\n", g_thiswcs, tmp, haGSDraw_sy );
 	fclose(f);
 	return haGSDraw_sy;
@@ -1735,7 +1732,7 @@ extern "C" void PrintBorderline( double a1, double a2 )
 		HDC hdc;
 		hdc = GetDC( 0 );
 		haGSDraw( tmp,hdc, 1 );
-		wcsokePath(hdc);
+		StrokePath(hdc);
 		borderBuf_sx=haGSDraw_sx;
 		borderBuf_sy=haGSDraw_sy;
 
